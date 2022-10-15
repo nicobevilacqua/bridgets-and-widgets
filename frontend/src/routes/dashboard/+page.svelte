@@ -1,7 +1,7 @@
 <script>
-
-    import { login, chainId, wallet, changeNetwork, provider} from "$lib/eth.js";
+  import { login, chainId, wallet, changeNetwork, provider} from "$lib/eth.js";
 	import getContract from "$lib/contract.js";
+    
   import { formatUnits, formatEther, parseEther, parseUnits } from "ethers/lib/utils";
 	
 	let hooks = false;
