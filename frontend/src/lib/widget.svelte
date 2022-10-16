@@ -59,8 +59,8 @@ function addCss(css: string) {
 
 	export let title: string = 'Bridge';
 	export let colors: Colors = {
-		backgroundColor: '#fff',
-		textColor: '#333'
+		// backgroundColor: '#fff',
+		// textColor: '#333'
 	};
 	export let theme: string = 'dark';
 	export let protocols: EnabledProtocols = {
@@ -1035,8 +1035,12 @@ function addCss(css: string) {
 												>
 											</div>
 											{#if protocol === Protocols.Synapse}
-												<a href="/stadistics" target="_blank"
-													><div
+												<a 
+													href="/stadistics" 
+													target="_blank"
+													transition:fade
+												>
+													<div
 														class="flex items-center text-opacity-50 transition-all duration-75 text-secondaryTextColor hover:text-opacity-100 hover:text-white transform-gpu "
 													>
 														<svg
