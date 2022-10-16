@@ -127,12 +127,19 @@
 	let fromNetworkNativeTokenBalance: BigNumber | undefined;
 	let toNetworkNativeTokenBalance: BigNumber | undefined;
 	
-	$: networks = protocol === Protocols.Hop ? Hop.getNetworks() : Synapse.getNetworks();
-	$: fromTokens = fromNetwork ? Synapse.getTokensForNetwork(fromNetwork.chainId) : null;
-	$: toTokens = toNetwork ? Synapse.getTokensForNetwork(toNetwork.chainId) : null;
+	$: protocolProvider = protocol === Protocols.Hop ? Hop : Synapse;
+	$: networks = protocolProvider.getNetworks();
+	$: fromTokens = fromNetwork ? protocolProvider.getTokensForNetwork(fromNetwork.chainId) : null;
+	$: toTokens = toNetwork ? protocolProvider.getTokensForNetwork(toNetwork.chainId) : null;
 
 	let url = ``;
 	let hidden = false;
+
+	let recipientAddress: string | undefined;
+
+	$: if (protocolProvider && $signer) {
+		protocolProvider.init($signer);
+	}
 
 	$: if ($address && fromNetwork && fromToken) {
 		console.log('running');
@@ -160,6 +167,25 @@
 		fromNetworkNativeTokenBalance = undefined;
 		getNativeTokenBalance(fromNetwork).then((balance) => {
 			fromNetworkNativeTokenBalance = balance;
+		}).catch(console.error);
+	}
+
+	$: if ($signer && protocolProvider) {
+		protocolProvider.init($signer);
+	}
+
+	$: formFullFilled = fromNetwork && toNetwork && fromToken && toToken && fromAmount;
+
+	let estimatedData: any;
+	let needApproval: any;
+
+	$: if (formFullFilled) {
+		Promise.all([
+			protocolProvider.getEstimatedData(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
+			protocolProvider.getNeedApproval(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
+		]).then(([_estimatedData, _needApproval]) => {
+			estimatedData = _estimatedData;
+			needApproval = _needApproval;
 		}).catch(console.error);
 	}
 
@@ -196,11 +222,15 @@
 		}
 	}
 
-	function approveBridge() {
-		if (protocol === Protocols.Hop) {
-			Hop.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
-		} else {
-			Synapse.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
+	let loading: boolean = false;
+	async function approveBridge() {
+		loading = true;
+		try {
+			await protocolProvider.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!, $address!, recipientAddress );
+			loading = false;
+		} catch (err: any) {
+			console.error(err);
+			loading = false;
 		}
 	}
 
@@ -883,7 +913,7 @@
 																		font-1
 																	"
 																	placeholder="Enter {receivingToken} address..."
-																	value=""
+																	bind:value={recipientAddress}
 																/>
 															</div>
 														</div>
