@@ -282,7 +282,7 @@
 																<div
 																	class="
                                                                     flex flex-grow items-center
-                                                                    pl-3 sm:pl-4
+                                                                    pl-3 
                                                                     w-full h-20
                                                                     rounded-xl
                                                                     border border-white border-opacity-20
@@ -479,7 +479,7 @@
 															<div
 																class="
             flex flex-grow items-center
-            pl-3 sm:pl-4
+            pl-3 
             w-full h-20
             rounded-xl
             border border-white border-opacity-20
@@ -613,7 +613,7 @@
                                                 h-14 flex flex-grow items-center
                                                 bg-transparent
                                                 border border-bgLight hover:border-bgLightest focus-within:border-bgLightest
-                                                pl-3 sm:pl-4
+                                                pl-3 
                                                 py-0.5 rounded-xl
                                                 font-0775
                                                 "
