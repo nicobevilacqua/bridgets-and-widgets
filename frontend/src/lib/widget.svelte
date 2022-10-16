@@ -135,6 +135,8 @@
 	let url = ``;
 	let hidden = false;
 
+	let recipientAddress: string | undefined;
+
 	$: if (protocolProvider && $signer) {
 		protocolProvider.init($signer);
 	}
@@ -174,8 +176,17 @@
 
 	$: formFullFilled = fromNetwork && toNetwork && fromToken && toToken && fromAmount;
 
+	let estimatedData: any;
+	let needApproval: any;
+
 	$: if (formFullFilled) {
-		protocolProvider.estimateData(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
+		Promise.all([
+			protocolProvider.getEstimatedData(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
+			protocolProvider.getNeedApproval(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
+		]).then(([_estimatedData, _needApproval]) => {
+			estimatedData = _estimatedData;
+			needApproval = _needApproval;
+		}).catch(console.error);
 	}
 
 	enum Origin {
@@ -211,11 +222,15 @@
 		}
 	}
 
-	function approveBridge() {
-		if (protocol === Protocols.Hop) {
-			Hop.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
-		} else {
-			Synapse.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
+	let loading: boolean = false;
+	async function approveBridge() {
+		loading = true;
+		try {
+			await protocolProvider.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!, $address!, recipientAddress );
+			loading = false;
+		} catch (err: any) {
+			console.error(err);
+			loading = false;
 		}
 	}
 
@@ -898,7 +913,7 @@
 																		font-1
 																	"
 																	placeholder="Enter {receivingToken} address..."
-																	value=""
+																	bind:value={recipientAddress}
 																/>
 															</div>
 														</div>

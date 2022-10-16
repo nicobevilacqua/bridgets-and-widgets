@@ -35,7 +35,11 @@ export function getTokensForNetwork(chainId: ChainId): Record<TokenSymbol, Token
 	return tokens[chainId];
 }
 
-export async function estimateData(
+export async function init(signer: Signer) {
+	console.log('initializing synapse');
+}
+
+export async function getEstimatedData(
 	fromNetwork: Network,
 	toNetwork: Network,
 	fromToken: Token,
@@ -43,6 +47,29 @@ export async function estimateData(
 	amount: number
 ) {
 	console.log('todo');
+	return { totalFee: 0.1 };
+}
+
+export async function getNeedApproval(
+	fromNetwork: Network,
+	toNetwork: Network,
+	fromToken: Token,
+	toToken: Token,
+	amount: number
+) {
+	console.log('todo');
+	return true;
+}
+
+export async function approve(
+	fromNetwork: Network,
+	toNetwork: Network,
+	fromToken: Token,
+	toToken: Token,
+	amount: number
+) {
+	console.log('todo');
+	return '0x12121';
 }
 
 export async function bridgeAndSwapTokens(
@@ -57,11 +84,3 @@ export async function bridgeAndSwapTokens(
 	console.log(Networks);
 	console.log('todo');
 }
-
-export async function init(signer: Signer) {
-	console.log('initializing synapse');
-}
-
-export async function needApproval() {}
-
-export async function approve(network: Network, token: Token, amount: number) {}

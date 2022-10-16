@@ -41,7 +41,7 @@ export function getTokensForNetwork(chainId: ChainId): Record<TokenSymbol, Token
 	return tokens[chainId];
 }
 
-export async function estimateData(
+export async function getEstimatedData(
 	fromNetwork: Network,
 	toNetwork: Network,
 	fromToken: Token,
@@ -61,13 +61,14 @@ export async function estimateData(
 	return estimate;
 }
 
-export async function needApproval(
+export async function getNeedApproval(
 	fromNetwork: Network,
 	toNetwork: Network,
 	fromToken: Token,
 	toToken: Token,
 	amount: number
 ) {
+	return true;
 	const bridge = getBridge(fromNetwork, toNetwork, fromToken, toToken);
 	const amountBn = bridge.parseUnits(amount);
 	const needsApproval = await bridge.needsApproval(amountBn, CHAIN_SLUGS[fromNetwork.chainId]);
@@ -87,6 +88,7 @@ export async function approve(
 	toToken: Token,
 	amount: number
 ) {
+	return '0x12121';
 	const bridge = getBridge(fromNetwork, toNetwork, fromToken, toToken);
 	const amountBn = bridge.parseUnits(amount);
 	const tx = await bridge.sendApproval(
@@ -122,7 +124,7 @@ export async function bridgeAndSwapTokens(
 			relayerFee: 0
 		};
 	} else {
-		const { totalFee } = await estimateData(fromNetwork, toNetwork, fromToken, toToken, amount);
+		const { totalFee } = await getEstimatedData(fromNetwork, toNetwork, fromToken, toToken, amount);
 		options = {
 			bonderFee: totalFee
 		};
