@@ -1,5 +1,6 @@
 <script>
 	import Logo from '$lib/svg/logo.svelte';
+	import Leadearboard from '../leaderboard/+page.svelte';
 </script>
 
 <svelte:head>
@@ -62,3 +63,5 @@
 		</div>
 	</div>
 </div>
+
+<Leadearboard />
