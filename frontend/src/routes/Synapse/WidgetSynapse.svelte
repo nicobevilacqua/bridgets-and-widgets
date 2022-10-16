@@ -1,5 +1,6 @@
 <script>
-	import Synapse from './+page.svelte';
+	// import Synapse from './+page.svelte';
+	import Synapse from '$lib/widget.svelte';
 	import SynapseLogo from '$lib/svg/Synapse.svelte';
 
 	function toggleShowSynapse() {
@@ -16,7 +17,7 @@
 	}
 </script>
 
-<button class="btn btn-circle " style="z-index:9100;" on:click={toggleShowSynapse}>
+<button class="btn btn-circle btn-logo" style="z-index:9100;" on:click={toggleShowSynapse}>
 	<SynapseLogo />
 </button>
 <div style="z-index:9999" id="widgetSynapse" class="dp-none Widget">
@@ -48,18 +49,39 @@
 		transition: all 0.3s ease-in-out;
 	}
 
+	.btn-logo {
+		z-index: 9100;
+		top: 80%;
+		position: fixed;
+		left: 1rem;
+
+		cursor: pointer;
+		background: #cccccc38;
+		border-radius: 50px;
+		padding: 0.2rem;
+	}
+
 	.dp-none {
 		position: absolute;
 		right: -700px;
 	}
-
-	@media (min-width: 1200px) {
+	@media (min-width: 800px) {
 		.Widget {
-			max-width: 1000px !important;
+			max-width: 700px !important;
 		}
 		.dp-none {
 			position: absolute;
-			right: -1000px;
+			right: -700px;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.Widget {
+			max-width: 1100px !important;
+		}
+		.dp-none {
+			position: absolute;
+			right: -1100px;
 		}
 	}
 

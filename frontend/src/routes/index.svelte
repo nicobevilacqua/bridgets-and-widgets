@@ -71,7 +71,7 @@
 
 		<WidgetSynapse />
 		<div
-			style="position:absolute; left:1rem; top:85%; z-index:9001;"
+			class="floating-widget"
 			on:click={() => {
 				option0 = !option0;
 			}}
@@ -80,7 +80,7 @@
 		</div>
 	{:else}
 		<div
-			style="position:absolute; left:1rem; top:90%; z-index:9001;"
+			class="floating-widget"
 			on:click={() => {
 				option0 = !option0;
 			}}
@@ -154,12 +154,12 @@
 					class="starting-buttons mt-4 flex flex-1 pt-6 justify-center space-x-2 sm:justify-start lg:mt-6 lg:justify-start"
 				>
 					{#if !$connected}
-						<button
+						<!-- <button
 							on:click={onConnect}
 							class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
 						>
 							Connect
-						</button>
+						</button> -->
 						<!-- <button
                             on:click={runScript}
                             class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
@@ -252,7 +252,7 @@
 							<a
 								class="btn-what-is-a-transaction inline-block cursor-pointer rounded-md bg-indigo-600 px-4 py-3 text-center text-sm
                        font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-indigo-700 btn-tertiary btn"
-								href="widgets">Try our Widgets in your DApp</a
+								href="widget">Try our Widgets in your DApp</a
 							>
 						</div>
 						<div class="mt-8 text-center inline-flex justify-center">
@@ -278,9 +278,8 @@
 				</p>
 
 				<div class="my-20 flex flex-col custom-button-centered align-middle">
-					<a
-						class="uppercase text-white btn btn-primary btn-first-tx   rounded-full"
-						href="/widgets">Get the widgets</a
+					<a class="uppercase text-white btn btn-primary btn-first-tx   rounded-full" href="/widget"
+						>Get the widgets</a
 					>
 				</div>
 			</div>
@@ -352,6 +351,17 @@
 		top: 1.5rem;
 		right: 2rem;
 		border-radius: 8px;
+	}
+
+	.floating-widget {
+		position: fixed;
+		left: 1rem;
+		top: 90%;
+		z-index: 9001;
+		cursor: pointer;
+		background: #cccccc38;
+		border-radius: 50px;
+		padding: 0.2rem;
 	}
 
 	/* .floating-button-container:after {

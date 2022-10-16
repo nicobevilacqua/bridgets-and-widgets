@@ -16,7 +16,7 @@
 	}
 </script>
 
-<button class="btn btn-circle " style="z-index:9100; " on:click={toggleShowHops}>
+<button class="btn btn-circle btn-logo" style="z-index:9100;  " on:click={toggleShowHops}>
 	<HopLogo />
 </button>
 <div style="z-index:9999" id="widgetHops" class="dp-none Widget">
@@ -52,13 +52,35 @@
 		right: -700px;
 	}
 
-	@media (min-width: 1200px) {
+	.btn-logo {
+		z-index: 9100;
+		top: 80%;
+		position: fixed;
+		left: 1rem;
+
+		cursor: pointer;
+		background: #cccccc38;
+		border-radius: 50px;
+		padding: 0.2rem;
+	}
+
+	@media (min-width: 800px) {
 		.Widget {
-			max-width: 1000px !important;
+			max-width: 700px !important;
 		}
 		.dp-none {
 			position: absolute;
-			right: -1000px;
+			right: -700px;
+		}
+	}
+
+	@media (min-width: 1200px) {
+		.Widget {
+			max-width: 1100px !important;
+		}
+		.dp-none {
+			position: absolute;
+			right: -1100px;
 		}
 	}
 	@-webkit-keyframes slidein_side {
