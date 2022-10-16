@@ -39,7 +39,7 @@
 		hop: boolean;
 	};
 
-	export let title: string;
+	export let title: string = 'Bridge';
 	export let colors: Colors = {
 		backgroundColor: '#fff',
 		textColor: '#333'
@@ -962,11 +962,11 @@
 											</div>
 										</div>
 										<div
-											class="flex-wrap items-center justify-between ml-5 mr-5 text-[15px] md:flex lg:flex"
+											class="flex-wrap items-center justify-between ml-5 mr-5 text-[15px] md:flex lg:flex pb-4"
 										>
 											<div class="flex items-center text-secondaryTextColor">
 												<span class="mr-1 opacity-50">Need help? Read </span><a
-													href="https://docs.synapseprotocol.com/how-to/bridge"
+													href="https://github.com/nicobevilacqua/arbitrum-hop"
 													target="_blank"
 													class=""
 													><span
@@ -988,28 +988,31 @@
 													/></svg
 												>
 											</div>
-											<a href="https://analytics.synapseprotocol.com/" target="_blank"
-												><div
-													class="flex items-center text-opacity-50 transition-all duration-75 text-secondaryTextColor hover:text-opacity-100 hover:text-white transform-gpu "
+											{#if protocol === Protocols.Synapse}
+												<a href="/stadistics" target="_blank"
+													><div
+														class="flex items-center text-opacity-50 transition-all duration-75 text-secondaryTextColor hover:text-opacity-100 hover:text-white transform-gpu "
+													>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															fill="none"
+															viewBox="0 0 24 24"
+															stroke="currentColor"
+															aria-hidden="true"
+															class="w-5 h-5 mr-2"
+															><path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+															/></svg
+														><span class="cursor-pointer">Stadistics</span>
+													</div></a
 												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														fill="none"
-														viewBox="0 0 24 24"
-														stroke="currentColor"
-														aria-hidden="true"
-														class="w-5 h-5 mr-2"
-														><path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															stroke-width="2"
-															d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-														/></svg
-													><span class="cursor-pointer">Analytics</span>
-												</div></a
-											>
-											<a class="pt-4 block" href="/"><Logo /></a>
-
+											{/if}
+											<!-- <a class="pt-4 block" href="/">
+												<Logo />
+											</a> -->
 										</div>
 									</div>
 								</div>
