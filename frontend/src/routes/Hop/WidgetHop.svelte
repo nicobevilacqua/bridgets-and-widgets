@@ -52,6 +52,15 @@
 		right: -700px;
 	}
 
+	@media (min-width: 1200px) {
+		.Widget {
+			max-width: 1000px !important;
+		}
+		.dp-none {
+			position: absolute;
+			right: -1000px;
+		}
+	}
 	@-webkit-keyframes slidein_side {
 		from {
 			left: 100%;
