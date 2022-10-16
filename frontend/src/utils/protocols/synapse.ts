@@ -3,6 +3,8 @@ import type { Network, ChainId, TokenSymbol, Token } from '../types';
 import { tokens } from '../tokens';
 import { networks } from '../networks';
 
+// import { Bridge, Tokens, Networks } from '@synapseprotocol/sdk';
+
 /**
  * include only the supported networks
  */
@@ -32,12 +34,15 @@ export function getTokensForNetwork(chainId: ChainId): Record<TokenSymbol, Token
 	return tokens[chainId];
 }
 
-export function bridgeAndSwapTokens(
+export async function bridgeAndSwapTokens(
 	fromChain: Network,
 	toChain: Network,
 	fromToken: Token,
 	toToken: Token,
 	amount: number
 ) {
+	const { Bridge, Tokens, ChainId, Networks } = await import('@synapseprotocol/sdk');
+
+	console.log(Networks);
 	console.log('todo');
 }

@@ -2,6 +2,8 @@
 	import { fade, blur, fly, slide, scale } from "svelte/transition";
   import { quintOut } from "svelte/easing";
 
+	import { abi as ERC20ABI } from '../abi/ERC20.sol/ERC20.json';
+
 	import NetworkSelector from '$lib/NetworkSelector.svelte';
 	import TokenSelector from '$lib/TokenSelector.svelte';
 
@@ -10,7 +12,8 @@
 	import DogeLogo from '$lib/images/dogechain.png';
 	import DFKLogo from '$lib/images/dfk.png';
 
-	import { BigNumber, Wallet, utils } from 'ethers';
+	import { BigNumber, Wallet, utils, providers } from 'ethers';
+	import * as ethers from 'ethers';
 
 	import { Synapse, Hop } from '../utils/protocols';
 	import type { Network, Token } from 'src/utils/types';
@@ -46,6 +49,52 @@
 		hop: true,
 	};
 
+	import { RPC } from '../utils/rpc';
+
+	function getProvider(network: Network) {
+		const rpcProviderUrl = RPC[network.chainId];
+
+		if (!rpcProviderUrl) {
+			throw new Error(`invalid chain ${network.name}`);
+		}
+
+		const provider = new providers.JsonRpcProvider(rpcProviderUrl);
+
+		return provider;
+	}
+
+	function getERC20Contract(token: Token, network: Network) {
+		const provider = getProvider(network);
+		const ERC20Contract = new ethers.Contract(token.address!, ERC20ABI, provider);
+		return ERC20Contract;
+	}
+
+	async function getTokenBalance(token: Token, network: Network) {
+		if (!$address) {
+			return;
+		}
+		
+		let tokenBalance;
+		if (!token.address || token.native) {
+			tokenBalance = await getNativeTokenBalance(network);
+		} else {
+			const contract = getERC20Contract(token, network);
+			tokenBalance = await contract.balanceOf($address);
+		}
+
+		return tokenBalance;
+	}
+
+	async function getNativeTokenBalance(network: Network) {
+		if (!$address) {
+			return;
+		}
+
+		const provider = getProvider(network);
+
+		return await provider.getBalance($address);
+	}
+
 
 	// Radio button for protocol selection
 	enum Protocols {
@@ -64,12 +113,49 @@
 	let toToken: Token;
 	let toTokenBalance: number | undefined;
 
-	let fromAmount;
-	let toAmount;
+	let fromAmount: number | undefined;
+	let toAmount: number | undefined;
+
+	let addTokensForGas: boolean = false;
+
+	// TODO: Calculate the actual value for a single transaction on destination
+	const minimalNativeTokenDestinationBalance = utils.parseEther('0.1');
+
+	let fromNetworkNativeTokenBalance: BigNumber | undefined;
+	let toNetworkNativeTokenBalance: BigNumber | undefined;
 	
 	$: networks = protocol === Protocols.Hop ? Hop.getNetworks() : Synapse.getNetworks();
 	$: fromTokens = fromNetwork ? Synapse.getTokensForNetwork(fromNetwork.chainId) : null; 
 	$: toTokens = toNetwork ? Synapse.getTokensForNetwork(toNetwork.chainId) : null; 
+
+	$: if ($address && fromNetwork && fromToken) {
+		console.log('running');
+		fromTokenBalance = undefined;
+		getTokenBalance(fromToken, fromNetwork).then((balance) => {
+			fromTokenBalance = balance;
+		}).catch(console.error);
+	}
+
+	$: if ($address && toNetwork && toToken) {
+		toTokenBalance = undefined;
+		getTokenBalance(toToken, toNetwork).then((balance) => {
+			toTokenBalance = balance;
+		}).catch(console.error);
+	}
+
+	$: if ($address && toNetwork) {
+		toNetworkNativeTokenBalance = undefined;
+		getNativeTokenBalance(toNetwork).then((balance) => {
+			toNetworkNativeTokenBalance = balance;
+		}).catch(console.error);
+	}
+
+	$: if ($address && fromNetwork) {
+		fromNetworkNativeTokenBalance = undefined;
+		getNativeTokenBalance(fromNetwork).then((balance) => {
+			fromNetworkNativeTokenBalance = balance;
+		}).catch(console.error);
+	}
 
 	enum Origin {
 		From,
@@ -105,7 +191,11 @@
 	}
 
 	function approveBridge() {
-		console.log('TODO');
+		if (protocol === Protocols.Hop) {
+			Hop.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
+		} else {
+			Synapse.bridgeAndSwapTokens(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
+		}
 	}
 
 const EthereumLogo =
@@ -147,7 +237,7 @@ const EthereumLogo =
 	var tokenSelling = 'token selling';
 	var expectedPriceOnSelling = '--';
 	var slippage = '--';
-	var messageButton = 'Enter amount to bridge';
+	$: messageButton = (!fromNetwork || !toNetwork) ? 'Enter networdks' : (!fromToken || !toToken) ? 'Enter tokens' : (!toAmount && !fromAmount) ? 'Enter amount to bridge' : 'Confirm';
 	var balanceOf = 0;
 
 	// mappings section
@@ -312,7 +402,10 @@ const EthereumLogo =
 																		<div
 																			class="text-gray-400 text-sm undefined hidden md:block lg:block mr-2"
 																		>
-																			Origin:
+																			<div>Origin:</div>
+																			{#if fromNetworkNativeTokenBalance}
+																				<div class="text-xs">({utils.formatUnits(fromNetworkNativeTokenBalance, fromNetwork.nativeCurrency.decimals)}) {fromNetwork.nativeCurrency.symbol}</div>
+																			{/if}
 																		</div>
 																		<div class="flex items-center space-x-4 md:space-x-3">
 																			{#if fromNetwork}
@@ -386,23 +479,23 @@ const EthereumLogo =
 																		class:disabled={!fromNetwork}
 																		><div
 																			class="
-                                                                            group rounded-xl
-                                                                            -ml-2
-                                                                            bg-white bg-opacity-10
+																				group rounded-xl
+																				-ml-2
+																				bg-white bg-opacity-10
                                                                             "
 																		>
 																			<div
 																				class="
-                                                                                flex justify-center md:justify-start 
-                                                                                bg-[#49444c] bg-opacity-100
-                                                                                transform-gpu transition-all duration-100
-                                                                                hover:bg-blue-100 dark:hover:bg-opacity-20 dark:hover:bg-blue-700
-                                                                                border border-transparent
-                                                                                hover:border-blue-300
-                                                                                items-center 
-                                                                                rounded-lg
-                                                                                py-1.5 pl-2 h-14
-                                                                            "
+																					flex justify-center md:justify-start 
+																					bg-[#49444c] bg-opacity-100
+																					transform-gpu transition-all duration-100
+																					hover:bg-blue-100 dark:hover:bg-opacity-20 dark:hover:bg-blue-700
+																					border border-transparent
+																					hover:border-blue-300
+																					items-center 
+																					rounded-lg
+																					py-1.5 pl-2 h-14
+																				"
 																			>
 																				{#if fromToken}
 																					<div class="self-center flex-shrink-0 hidden mr-1 sm:block">
@@ -439,19 +532,21 @@ const EthereumLogo =
 																				</div>
 																		</div></button
 																	><input
+																		disabled={!fromToken}
 																		pattern="[0-9.]+"
 																		class="
-                                                                        ml-4
-                                                                        -mt-0
-                                                                        mb-4
-                                                                        focus:outline-none
-                                                                        bg-transparent
-                                                                        pr-4
-                                                                        w-2/3
-                                                                        placeholder:text-[#88818C] 
-                                                                        text-white text-opacity-80 text-lg md:text-2xl lg:text-2xl font-medium
-                                                                        "
+																			ml-4
+																			-mt-0
+																			focus:outline-none
+																			bg-transparent
+																			pr-4
+																			w-2/3
+																			placeholder:text-[#88818C] 
+																			text-white text-opacity-80 text-lg md:text-2xl lg:text-2xl font-medium
+																		"
+																		class:mb-4={fromTokenBalance !== undefined}
 																		placeholder="0.0000"
+																		type="number"
 																		name="inputRow"
 																		bind:value={fromAmount}
 																		id="inputSeller"
@@ -461,7 +556,7 @@ const EthereumLogo =
 																			for="inputRow"
 																			class="absolute hidden pt-1 mt-8 ml-40 text-xs text-white transition-all duration-150 md:block transform-gpu hover:text-opacity-70"
 																		>
-																			{fromTokenBalance}
+																			{utils.formatUnits(fromTokenBalance, fromToken.decimals)}
 																			<span class="text-opacity-50 text-secondaryTextColor">
 																				available
 																			</span>
@@ -521,9 +616,12 @@ const EthereumLogo =
 																</div>
 																<div class="flex items-center justify-center md:justify-between">
 																	<div
-																		class="text-gray-400 text-sm undefined hidden md:block lg:block text-sm mr-2"
+																		class="flex flex-col text-gray-400 text-sm undefined mr-2"
 																	>
-																		Destination
+																		<div>Destination</div>
+																		{#if toNetworkNativeTokenBalance}
+																			<div class="text-xs">({utils.formatUnits(toNetworkNativeTokenBalance, toNetwork.nativeCurrency.decimals)}) {toNetwork.nativeCurrency.symbol}</div>
+																		{/if}
 																	</div>
 																	<div class="flex items-center space-x-4 md:space-x-3">
 																		{#if toNetwork}
@@ -660,16 +758,41 @@ const EthereumLogo =
              placeholder:text-[#88818C] 
              text-white text-opacity-80 text-lg md:text-2xl lg:text-2xl font-medium
             "
+						class:mb-4={toTokenBalance !== undefined}
 																	placeholder="0.0000"
 																	name="inputRow"
-																	value=""
+																	bind:value={toAmount}
+																	type="number"
 																	id="inputBuyer"
 																/>
+																{#if toTokenBalance !== undefined}
+																	<label
+																		for="inputRow"
+																		class="absolute hidden pt-1 mt-8 ml-40 text-xs text-white transition-all duration-150 md:block transform-gpu hover:text-opacity-70"
+																	>
+																		{utils.formatUnits(toTokenBalance, toToken.decimals)}
+																		<span class="text-opacity-50 text-secondaryTextColor">
+																			available
+																		</span>
+																	</label>
+																{/if}
 															</div>
 														</div>
 													</div>
 												</div>
 												<div class="py-3.5 px-1 space-y-2 text-xs md:text-base lg:text-base">
+													{#if toNetworkNativeTokenBalance && toNetworkNativeTokenBalance.lt(minimalNativeTokenDestinationBalance)}
+														<div class="flex flex-col rounded-xl bg-bgLight border px-4 py-2 mb-4" transition:slide={{ delay: 50, duration: 300, easing: quintOut }}>
+															<div class="text-red-500 mb-2">
+																Insufficient balance for gas on destination network
+															</div>
+															<label class="text-[#88818C] cursor-pointer">
+																<input type="checkbox" bind:value={addTokensForGas} />
+																Add some tokens for gas
+															</label>
+														</div>
+													{/if}
+													
 													<div class="flex items-center justify-between">
 														<div class="flex justify-between text-[#88818C]">
 															<span class="text-[#88818C]"
@@ -702,7 +825,7 @@ const EthereumLogo =
 													</div>
 												</div>
 
-												<details class="summary-code-170" open="">
+												<details class="summary-code-170">
 													<summary class="summary-code-171"
 														><div
 															class="mb-4 MuiTypography-root summary-code-172 MuiTypography-subtitle1 MuiTypography-colorTextSecondary"
@@ -756,7 +879,8 @@ const EthereumLogo =
 															class:disabled={!fromNetwork || !toNetwork || !fromToken || !toToken}
 															disabled={!fromNetwork || !toNetwork || !fromToken || !toToken}
 															type="button"
-															on:click={approveBridge}><span>{messageButton}</span></button
+															on:click={approveBridge}
+														><span>{messageButton}</span></button
 														>
 													{:else}
 														<button 
