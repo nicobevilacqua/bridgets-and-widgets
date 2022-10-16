@@ -27,8 +27,8 @@
     init();
     url = window.location.href;
     if (url.indexOf('synapse') != -1 || url.indexOf('hop') != -1) hidden = true;
-    addCss("#root .min-h-screen.bg-no-repeat {backgroundColor:" + colors.backgroundColor);
-    addCss("#root * {color:" + colors.textColor);
+    // addCss("#root .min-h-screen.bg-no-repeat {backgroundColor:" + colors.backgroundColor);
+    // addCss("#root * {color:" + colors.textColor);
 });
 
 function addCss(css: string) {
