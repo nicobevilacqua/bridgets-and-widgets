@@ -8,12 +8,16 @@
 	import ByWLink from '$lib/images/logo.png';
 	import SvgCheck from '$lib/svg/svgCheck.svelte';
 	import Wallet from '$lib/WalletAddress.svelte';
+	import WidgetHop from './Hop/WidgetHop.svelte';
+	import WidgetSynapse from './Synapse/WidgetSynapse.svelte';
 
 	// import { main } from "$lib/placeOrder"
 	import { onConnect, onDisconnect, connectWallet } from '$lib/web3';
 	import Synapse from '$lib/svg/Synapse.svelte';
 	import Hop from '$lib/svg/Hop.svelte';
 	import Logo from '$lib/svg/logo.svelte';
+	var option0 = false;
+
 	function runScript() {
 		console.log('Running script');
 		// main()
@@ -62,6 +66,29 @@
 </script>
 
 <div class="index">
+	{#if option0}
+		<!-- style="position:absolute; right:0; top:0; " -->
+
+		<WidgetSynapse />
+		<div
+			style="position:absolute; left:1rem; top:85%; z-index:9001;"
+			on:click={() => {
+				option0 = !option0;
+			}}
+		>
+			<Hop />
+		</div>
+	{:else}
+		<div
+			style="position:absolute; left:1rem; top:90%; z-index:9001;"
+			on:click={() => {
+				option0 = !option0;
+			}}
+		>
+			<Synapse />
+		</div>
+		<WidgetHop />
+	{/if}
 	<div
 		class="from-primary to-secondary text-primary-content -mt-[4rem] grid place-items-center items-end bg-gradient-to-br pt-20 hero-image-main"
 	>
@@ -228,12 +255,9 @@
 								href="widgets">Try our Widgets in your DApp</a
 							>
 						</div>
-						<a href="widgets" class="mt-8 text-center inline-flex justify-center">
-							<div class="mt-8 text-center inline-flex justify-center gap-4">
-								<Synapse />
-								<Hop />
-							</div>
-						</a>
+						<div class="mt-8 text-center inline-flex justify-center">
+							<div class="mt-8 text-center inline-flex justify-center gap-4" />
+						</div>
 					</div>
 				</div>
 			</div>

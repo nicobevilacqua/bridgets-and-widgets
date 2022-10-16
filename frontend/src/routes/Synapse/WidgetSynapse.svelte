@@ -16,8 +16,10 @@
 	}
 </script>
 
-<button class="btn btn-circle " on:click={toggleShowSynapse}> <SynapseLogo /> </button>
-<div id="widgetSynapse" class="dp-none Widget">
+<button class="btn btn-circle " style="z-index:9100;" on:click={toggleShowSynapse}>
+	<SynapseLogo />
+</button>
+<div style="z-index:9999" id="widgetSynapse" class="dp-none Widget">
 	<Synapse />
 </div>
 

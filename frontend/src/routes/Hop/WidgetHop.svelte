@@ -16,8 +16,10 @@
 	}
 </script>
 
-<button class="btn btn-circle " on:click={toggleShowHops}> <HopLogo /> </button>
-<div id="widgetHops" class="dp-none Widget">
+<button class="btn btn-circle " style="z-index:9100; " on:click={toggleShowHops}>
+	<HopLogo />
+</button>
+<div style="z-index:9999" id="widgetHops" class="dp-none Widget">
 	<Hop />
 </div>
 
