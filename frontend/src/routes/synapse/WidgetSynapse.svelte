@@ -10,9 +10,10 @@
 				element.classList != null &&
 				element.classList.length > 0 &&
 				element.classList.contains('dp-none')
-			)
+			) {
 				element.classList.remove('dp-none');
-			else element.classList.add('dp-none');
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			} else element.classList.add('dp-none');
 		} else console.log('Error: not included Synapse');
 	}
 </script>
