@@ -31,6 +31,7 @@
 		right: 0;
 		max-width: 700px !important;
 		top: 0;
+		width:100%;
 
 		/* for chrome and safari*/
 		-webkit-animation-duration: 1s;

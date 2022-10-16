@@ -9,7 +9,7 @@
 	import SvgCheck from '$lib/svg/svgCheck.svelte';
 	import Wallet from '$lib/WalletAddress.svelte';
 	import WidgetHop from './hop/WidgetHop.svelte';
-	import WidgetSynapse from './synapse/WidgetSynapse.svelte';
+	import WidgetSynapse from './Synapse/WidgetSynapse.svelte';
 
 	// import { main } from "$lib/placeOrder"
 	import { onConnect, onDisconnect, connectWallet } from '$lib/web3';

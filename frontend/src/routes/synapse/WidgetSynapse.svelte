@@ -31,7 +31,7 @@
 		right: 0;
 		max-width: 700px !important;
 		top: 0;
-
+		width:100%;
 		/* for chrome and safari*/
 		-webkit-animation-duration: 1s;
 		-webkit-animation-name: slidein_side;
@@ -66,6 +66,18 @@
 		position: absolute;
 		right: -700px;
 	}
+
+	@media (min-width: 400px) {
+		.Widget {
+			max-width: 700px !important;
+		}
+		.dp-none {
+			position: absolute;
+			right: -700px;
+		}
+	}
+
+
 	@media (min-width: 800px) {
 		.Widget {
 			max-width: 700px !important;
