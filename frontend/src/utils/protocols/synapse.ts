@@ -1,10 +1,14 @@
 import { chain } from 'eth-chains';
-import type { Network, ChainId, TokenSymbol, Token } from '../types';
+import type { Network, ChainId, TokenSymbol, Token, EstimatedData } from '../types';
 import { tokens } from '../tokens';
 import { networks } from '../networks';
 import type { Signer } from 'ethers';
+import { BigNumber, utils } from 'ethers';
+import { Bridge, Tokens, Networks } from '@synapseprotocol/sdk';
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { parseUnits, formatUnits } from '@ethersproject/units';
 
-// import { Bridge, Tokens, Networks } from '@synapseprotocol/sdk';
+import { RPC } from '../rpc';
 
 /**
  * include only the supported networks
@@ -35,7 +39,16 @@ export function getTokensForNetwork(chainId: ChainId): Record<TokenSymbol, Token
 	return tokens[chainId];
 }
 
-export async function init(signer: Signer) {
+const TOKENS = {
+	[Tokens.ETH.symbol]: Tokens.ETH,
+	[Tokens.USDC.symbol]: Tokens.USDC,
+	[Tokens.USDT.symbol]: Tokens.USDT,
+	[Tokens.DAI.symbol]: Tokens.DAI
+};
+
+let signer: any;
+export async function init(_signer: Signer) {
+	signer = _signer;
 	console.log('initializing synapse');
 }
 
@@ -45,9 +58,22 @@ export async function getEstimatedData(
 	fromToken: Token,
 	toToken: Token,
 	amount: number
-) {
-	console.log('todo');
-	return { totalFee: 0.1 };
+): Promise<EstimatedData> {
+	const bridge = getBridge(fromNetwork);
+	const { amountToReceive, bridgeFee } = await bridge.estimateBridgeTokenOutput({
+		tokenFrom: TOKENS[fromToken.symbol], // token to send from the source chain, in this case USDT on Avalanche
+		chainIdTo: toNetwork.chainId, // Chain ID of the destination chain, in this case BSC
+		tokenTo: TOKENS[toToken.symbol], // Token to be received on the destination chain, in this case USDC
+		amountFrom: utils.parseUnits(amount.toString(), fromToken.decimals)
+	});
+	console.log({
+		totalFee: bridgeFee,
+		receivedAmount: amountToReceive
+	});
+	return {
+		totalFee: bridgeFee,
+		receivedAmount: amountToReceive
+	};
 }
 
 export async function getNeedApproval(
@@ -57,7 +83,6 @@ export async function getNeedApproval(
 	toToken: Token,
 	amount: number
 ) {
-	console.log('todo');
 	return true;
 }
 
@@ -68,19 +93,58 @@ export async function approve(
 	toToken: Token,
 	amount: number
 ) {
-	console.log('todo');
-	return '0x12121';
+	if (!signer) {
+		throw new Error('invalid signer');
+	}
+
+	const bridge = getBridge(fromNetwork);
+	const transactionData = await bridge.buildApproveTransaction({
+		token: TOKENS[fromToken.symbol]
+	});
+	const tx = await signer.sendTransaction(transactionData);
+	const receipt = await tx.wait();
+	return receipt.hash;
 }
 
 export async function bridgeAndSwapTokens(
-	fromChain: Network,
-	toChain: Network,
+	fromNetwork: Network,
+	toNetwork: Network,
 	fromToken: Token,
 	toToken: Token,
 	amount: number
 ) {
-	const { Bridge, Tokens, ChainId, Networks } = await import('@synapseprotocol/sdk');
+	if (!signer) {
+		throw new Error('invalid signer');
+	}
 
-	console.log(Networks);
-	console.log('todo');
+	const rpcUrl = RPC[fromNetwork.chainId];
+	if (!rpcUrl) {
+		throw new Error('invalid network');
+	}
+
+	const bridge = getBridge(fromNetwork);
+
+	const estimatedData = await getEstimatedData(fromNetwork, toNetwork, fromToken, toToken, amount);
+
+	const amountToSend = utils.parseUnits(amount.toString(), fromToken.decimals);
+
+	const transactionData = await bridge.buildBridgeTokenTransaction({
+		tokenFrom: TOKENS[fromToken.symbol], // token to send from the source chain, in this case nUSD on Avalanche
+		chainIdTo: toNetwork.chainId, // Chain ID of the destination chain, in this case BSC
+		tokenTo: TOKENS[toToken.symbol], // Token to be received on the destination chain, in this case USDC
+		amountFrom: amountToSend, // Amount of `tokenFrom` being sent
+		amountTo: estimatedData.receivedAmount, // minimum desired amount of `tokenTo` to receive on the destination chain
+		addressTo: await signer.getAddress()
+	});
+
+	const tx = await signer.sendTransaction(transactionData);
+	const receipt = await tx.wait();
+	return receipt.hash;
+}
+
+function getBridge(fromNetwork: Network) {
+	const bridge = new Bridge.SynapseBridge({
+		network: fromNetwork.chainId
+	});
+	return bridge;
 }

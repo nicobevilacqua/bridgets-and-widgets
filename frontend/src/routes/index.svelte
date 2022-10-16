@@ -8,8 +8,8 @@
 	import ByWLink from '$lib/images/logo.png';
 	import SvgCheck from '$lib/svg/svgCheck.svelte';
 	import Wallet from '$lib/WalletAddress.svelte';
-	import WidgetHop from './Hop/WidgetHop.svelte';
-	import WidgetSynapse from './Synapse/WidgetSynapse.svelte';
+	import WidgetHop from './hop/WidgetHop.svelte';
+	import WidgetSynapse from './synapse/WidgetSynapse.svelte';
 
 	// import { main } from "$lib/placeOrder"
 	import { onConnect, onDisconnect, connectWallet } from '$lib/web3';

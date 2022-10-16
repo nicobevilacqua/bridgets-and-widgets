@@ -12,12 +12,11 @@
 	import DogeLogo from '$lib/images/dogechain.png';
 	import DFKLogo from '$lib/images/dfk.png';
 
-	import { BigNumber, Wallet, utils, providers } from 'ethers';
+	import { BigNumber, utils, providers } from 'ethers';
 	import * as ethers from 'ethers';
-	import { page } from '$app/stores';
 
 	import { Synapse, Hop } from '../utils/protocols';
-	import type { Network, Token } from 'src/utils/types';
+	import type { Network, Token, EstimatedData } from 'src/utils/types';
 
 	import '../app.postcss'; // needed for rollup export
 	import { onMount } from 'svelte';
@@ -27,7 +26,7 @@
 	onMount(() => {
 		init();
 		url = window.location.href;
-		if (url.indexOf('Synapse') != -1 || url.indexOf('Hop') != -1) hidden = true;
+		if (url.indexOf('synapse') != -1 || url.indexOf('hop') != -1) hidden = true;
 	});
 
 	type Colors = {
@@ -40,13 +39,13 @@
 		hop: boolean;
 	};
 
-	export const title: string = 'Bridge';
-	export const colors: Colors = {
+	export let title: string;
+	export let colors: Colors = {
 		backgroundColor: '#fff',
 		textColor: '#333'
 	};
-	export const theme: string = 'dark';
-	export const protocols: EnabledProtocols = {
+	export let theme: string = 'dark';
+	export let protocols: EnabledProtocols = {
 		synapse: true,
 		hop: true
 	};
@@ -176,8 +175,8 @@
 
 	$: formFullFilled = fromNetwork && toNetwork && fromToken && toToken && fromAmount;
 
-	let estimatedData: any;
-	let needApproval: any;
+	let estimatedData: EstimatedData;
+	let needApproval: boolean | undefined;
 
 	$: if (formFullFilled) {
 		Promise.all([
@@ -272,7 +271,7 @@
 	var tokenSelling = 'token selling';
 	var expectedPriceOnSelling = '--';
 	var slippage = '--';
-	$: messageButton = (!fromNetwork || !toNetwork) ? 'Enter networdks' : (!fromToken || !toToken) ? 'Enter tokens' : (!toAmount && !fromAmount) ? 'Enter amount to bridge' : 'Confirm';
+	$: messageButton = (!fromNetwork || !toNetwork) ? 'Enter networks' : (!fromToken || !toToken) ? 'Enter tokens' : (!toAmount && !fromAmount) ? 'Enter amount to bridge' : 'Confirm';
 	var balanceOf = 0;
 
 	// mappings section
@@ -373,7 +372,7 @@
 										<div class="flex items-center justify-between mb-5 ml-5 mr-5 space-x-2">
 											<div class="w-full">
 												<div class="flex flex-row items-center justify-between w-full">
-													<div class="text-2xl font-medium text-white">Bridge</div>
+													<div class="text-2xl font-medium text-white">{title}</div>
 												</div>
 
 												<div class="text-base text-white text-opacity-50">
@@ -830,31 +829,52 @@
 												</div>
 												<div class="py-3.5 px-1 space-y-2 text-xs md:text-base lg:text-base">
 													{#if toNetworkNativeTokenBalance && toNetworkNativeTokenBalance.lt(minimalNativeTokenDestinationBalance)}
-														<div class="flex flex-col rounded-xl bg-bgLight border px-4 py-2 mb-4" transition:slide={{ delay: 50, duration: 300, easing: quintOut }}>
+														<div 
+															class="flex flex-col rounded-xl bg-bgLight border px-4 py-2 mb-4" 
+															transition:slide={{ delay: 50, duration: 300, easing: quintOut }}
+														>
 															<div class="text-red-500 mb-2">
 																Insufficient balance for gas on destination network
 															</div>
 															<label class="text-[#88818C] cursor-pointer">
-																<input type="checkbox" bind:value={addTokensForGas} />
+																<input type="checkbox" bind:checked={addTokensForGas} />
 																Add some tokens for gas
 															</label>
 														</div>
 													{/if}
 													
-													<div class="flex items-center justify-between">
-														<div class="flex justify-between text-[#88818C]">
-															<span class="text-[#88818C]"
-																>Will also receive {receivingExtraAmount}
-															</span>
-															<span class="ml-1 font-medium text-white"
-																>{receivingToken}
-																<span class="text-[#88818C] font-normal">
-																	({receivingValue})</span
-																></span
-															>
+													{#if estimatedData}
+														<div 
+														class="flex flex-col justify-between"
+														transition:slide={{ delay: 50, duration: 300, easing: quintOut }}
+														>
+															<div class="flex justify-between text-[#88818C]">
+																<span class="text-[#88818C]">
+																	Amount received {utils.formatUnits(estimatedData.receivedAmount, toToken.decimals)} {toToken.symbol}
+																</span>
+															</div>
+															<div class="flex justify-between text-[#88818C]">
+																<span class="text-[#88818C]">
+																	Total fees {utils.formatUnits(estimatedData.totalFee, toToken.decimals)} {toToken.symbol}
+																</span>
+															</div>
 														</div>
-													</div>
-													<div class="flex justify-between">
+													{/if}
+
+													{#if toNetwork && addTokensForGas}
+														<div 
+															class="flex items-center justify-between"
+															transition:slide={{ delay: 50, duration: 300, easing: quintOut }}
+														>
+															<div class="flex justify-between text-[#88818C]">
+																<span class="text-[#88818C]"
+																	>Will also receive {utils.formatUnits(minimalNativeTokenDestinationBalance, toNetwork.nativeCurrency.decimals)} {toNetwork.nativeCurrency.symbol} for gas on {toNetwork.name}
+																</span>
+															</div>
+														</div>
+													{/if}
+													
+													<!-- <div class="flex justify-between">
 														<div class="flex space-x-2 text-[#88818C]">
 															<p>Expected Price on</p>
 															<span class="flex items-center space-x-1"
@@ -871,7 +891,7 @@
 														<p class="text-[#88818C] ">Slippage</p>
 														<span class="text-[#88818C]">{slippage}</span>
 													</div>
-												</div>
+												</div> -->
 
 												<details class="summary-code-170">
 													<summary class="summary-code-171"
