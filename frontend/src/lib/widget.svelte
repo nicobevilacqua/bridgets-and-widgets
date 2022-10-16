@@ -23,7 +23,6 @@
 	onMount(() => {
 		init();
 		url = window.location.href;
-
 		if (url.indexOf('Synapse') != -1 || url.indexOf('Hop') != -1) hidden = true;
 	});
 

@@ -16,12 +16,35 @@
 	import Synapse from '$lib/svg/Synapse.svelte';
 	import Hop from '$lib/svg/Hop.svelte';
 	import Logo from '$lib/svg/logo.svelte';
+	import { onMount } from 'svelte';
+
 	var option0 = false;
 
 	function runScript() {
 		console.log('Running script');
 		// main()
 	}
+
+	onMount(() => {
+		var element = document.querySelectorAll('#code_block');
+		console.log(element);
+		if (element != null)
+			element[0].innerText = `
+
+            <Widget
+                title="Widgets&Bridgets"
+                protocols={{
+                    synapse: true,
+                    hop: true
+                }}
+                theme: 'dark'
+                colors: {textColor: '#333'}
+					/>
+		        `;
+		//  element.innerText = `
+		//
+		//         `;
+	});
 	// $: start_string = signerAddress != null && connected ? signerAddress.slice(0, 4) : ""
 	// $: end_string = signerAddress != null && connected ? signerAddress.slice(-4) : ""
 	// $: address = "" + start_string + end_string
@@ -227,10 +250,8 @@
 					Bridges&Widgets aims to help users to perform bridge operations in a more simple way and
 					aims to helps developers on implement bridge operations in few minutes
 				</p>
-
-				<p />
 				<div
-					class="mt-10 mb-10 flex flex-col lg:flex-row second-box-content"
+					class="mt-6 mb-10 flex flex-col lg:flex-row second-box-content"
 					style="font-size: 20px"
 				>
 					<div class="flex w-full flex-col text-left">
@@ -276,10 +297,15 @@
 					Thanks to our widgets implementation, Bridges&Widgets allows your DApp to bridge in less
 					than 5 minutes.
 				</p>
-
+				<p class="mx-auto mb-5 w-full regular-text lh-regular">
+					You just need to import the package, copy the next code and include it on your
+					application. A floating button, when clicked, will display a sidebar with the bridge
+					options you needed!
+				</p>
+				<code id="code_block" style="" />
 				<div class="my-20 flex flex-col custom-button-centered align-middle">
 					<a class="uppercase text-white btn btn-primary btn-first-tx   rounded-full" href="/widget"
-						>Get the widgets</a
+						>Try the widget</a
 					>
 				</div>
 			</div>
@@ -292,13 +318,13 @@
 	>
 		<div class="hero-content mx-auto max-w-md text-center md:max-w-full">
 			<div>
-				<h2 class="mt-20 mb-8  text-4xl font-extrabold md:text-6xl">Bridge your tokens</h2>
+				<h2 class="mt-20 mb-8  text-4xl font-extrabold md:text-6xl">Access to bridge Stadistics</h2>
 				<h3 class="mb-5 text-3xl font-bold regular-text-title">
-					Use one of our widgets to bridge your tokens!
+					Get knowledge of everything happening on Arbitrum and Synapse!
 				</h3>
 				<p class="mx-auto mb-5 w-full max-w-l regular-text-smaller">
 					Actually, we implemented widgets for Hop and Synapse, that includes multiples chains and
-					tokens.
+					tokens. Also we track it.
 				</p>
 				<p class="mx-auto mb-5 w-full max-w-l regular-text-smaller">
 					We provide you the tools, you enjoy the travel
