@@ -845,12 +845,17 @@
 													
 													{#if estimatedData}
 														<div 
-															class="flex items-center justify-between"
-															transition:slide={{ delay: 50, duration: 300, easing: quintOut }}
+														class="flex flex-col justify-between"
+														transition:slide={{ delay: 50, duration: 300, easing: quintOut }}
 														>
 															<div class="flex justify-between text-[#88818C]">
 																<span class="text-[#88818C]">
 																	Amount received {utils.formatUnits(estimatedData.receivedAmount, toToken.decimals)} {toToken.symbol}
+																</span>
+															</div>
+															<div class="flex justify-between text-[#88818C]">
+																<span class="text-[#88818C]">
+																	Total fees {utils.formatUnits(estimatedData.totalFee, toToken.decimals)} {toToken.symbol}
 																</span>
 															</div>
 														</div>
