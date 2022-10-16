@@ -3,8 +3,7 @@ import type { EstimatedData, Network, ChainId, TokenSymbol, Token } from '../typ
 import { tokens } from '../tokens';
 import { networks } from '../networks';
 import type { Signer } from 'ethers';
-import { utils } from 'ethers';
-import { Chain, Hop, HopBridge, type TToken, ChainSlug } from '@hop-protocol/sdk';
+import { Hop, ChainSlug } from '@hop-protocol/sdk';
 
 const CHAIN_SLUGS = {
 	[chain.ethereum.mainnet.chainId]: ChainSlug.Ethereum,
@@ -49,17 +48,18 @@ export async function getEstimatedData(
 	toToken: Token,
 	amount: number
 ): Promise<EstimatedData> {
-	return { totalFee: utils.parseEther('0.1'), receivedAmount: utils.parseEther(amount.toString()) };
-	// not working locally
 	const bridge = getBridge(fromNetwork, toNetwork, fromToken, toToken);
 	const parsedAmount = bridge.parseUnits(amount);
-	const estimate = await bridge.getSendData(
+	const estimatedData = await bridge.getSendData(
 		parsedAmount,
 		CHAIN_SLUGS[fromNetwork.chainId],
 		CHAIN_SLUGS[toNetwork.chainId]
 	);
 
-	return estimate;
+	return {
+		totalFee: estimatedData.totalFee,
+		receivedAmount: estimatedData.estimatedReceived
+	};
 }
 
 export async function getNeedApproval(
@@ -69,7 +69,6 @@ export async function getNeedApproval(
 	toToken: Token,
 	amount: number
 ) {
-	return true;
 	const bridge = getBridge(fromNetwork, toNetwork, fromToken, toToken);
 	const amountBn = bridge.parseUnits(amount);
 	const needsApproval = await bridge.needsApproval(amountBn, CHAIN_SLUGS[fromNetwork.chainId]);
@@ -89,7 +88,6 @@ export async function approve(
 	toToken: Token,
 	amount: number
 ) {
-	return '0x12121';
 	const bridge = getBridge(fromNetwork, toNetwork, fromToken, toToken);
 	const amountBn = bridge.parseUnits(amount);
 	const tx = await bridge.sendApproval(

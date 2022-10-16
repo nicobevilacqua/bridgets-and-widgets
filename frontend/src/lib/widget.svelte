@@ -116,7 +116,7 @@
 	let toTokenBalance: number | undefined;
 
 	let fromAmount: number | undefined;
-	let toAmount: number | undefined;
+	let toAmount: BigNumber | undefined;
 
 	let addTokensForGas: boolean = false;
 
@@ -183,7 +183,9 @@
 			protocolProvider.getEstimatedData(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
 			protocolProvider.getNeedApproval(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
 		]).then(([_estimatedData, _needApproval]) => {
+			console.log(_estimatedData.totalFee, toToken, toToken.decimals, utils.formatUnits(_estimatedData.totalFee, toToken.decimals));
 			estimatedData = _estimatedData;
+			toAmount = estimatedData.receivedAmount;
 			needApproval = _needApproval;
 		}).catch(console.error);
 	}
@@ -233,6 +235,19 @@
 		}
 	}
 
+	let approving = false;
+	async function onTokensApprove() {
+		approving = true;
+		try {
+			await protocolProvider.approve(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
+			needApproval = false;
+			approving = false;
+		} catch (err: any) {
+			console.error(err);
+			approving = false;
+		}
+	}
+
 	const EthereumLogo =
 		'data:image/jpeg;base64,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';
 	const ArbitrumLogo =
@@ -271,7 +286,7 @@
 	var tokenSelling = 'token selling';
 	var expectedPriceOnSelling = '--';
 	var slippage = '--';
-	$: messageButton = (!fromNetwork || !toNetwork) ? 'Enter networks' : (!fromToken || !toToken) ? 'Enter tokens' : (!toAmount && !fromAmount) ? 'Enter amount to bridge' : 'Confirm';
+	$: messageButton = (!fromNetwork || !toNetwork) ? 'Enter networks' : (!fromToken || !toToken) ? 'Enter tokens' : !fromAmount ? 'Enter amount to bridge' : !fromTokenBalance || fromAmount < fromTokenBalance ? 'Insufficient founds' : 'Confirm';
 	var balanceOf = 0;
 
 	// mappings section
@@ -808,7 +823,7 @@
 						class:mb-4={toTokenBalance !== undefined}
 																	placeholder="0.0000"
 																	name="inputRow"
-																	bind:value={toAmount}
+																	value={toToken && toAmount ? utils.formatUnits(toAmount, toToken.decimals) : undefined}
 																	type="number"
 																	id="inputBuyer"
 																/>
@@ -850,7 +865,7 @@
 														>
 															<div class="flex justify-between text-[#88818C]">
 																<span class="text-[#88818C]">
-																	Amount received {utils.formatUnits(estimatedData.receivedAmount, toToken.decimals)} {toToken.symbol}
+																	Amount to be received {utils.formatUnits(estimatedData.receivedAmount, toToken.decimals)} {toToken.symbol}
 																</span>
 															</div>
 															<div class="flex justify-between text-[#88818C]">
@@ -950,7 +965,16 @@
 															on:click={approveBridge}
 														><span>{messageButton}</span></button
 														>
-													{:else}
+													{:else if needApproval}
+														<button
+															class="group cursor-pointer outline-none focus:outline-none active:outline-none ring-none duration-100 transform-gpu w-full rounded-lg my-2 px-4 py-3 text-white text-opacity-100 transition-all hover:opacity-80 disabled:opacity-100 disabled:text-[#88818C] disabled:from-bgLight disabled:to-bgLight bg-gradient-to-r from-[#CF52FE] to-[#AC8FFF] undefined false"
+															class:disabled={approving}
+															disabled={approving}
+															on:click={onTokensApprove}
+														>
+															{approving ? `Approving` : `Approve ${fromToken.name} transfer on ${fromNetwork.name}`}
+														</button>
+													(:else)
 														<button
 															class="group cursor-pointer outline-none focus:outline-none active:outline-none ring-none duration-100 transform-gpu w-full rounded-lg my-2 px-4 py-3 text-white text-opacity-100 transition-all hover:opacity-80 disabled:opacity-100 disabled:text-[#88818C] disabled:from-bgLight disabled:to-bgLight bg-gradient-to-r from-[#CF52FE] to-[#AC8FFF] undefined false"
 															on:click={connect}
