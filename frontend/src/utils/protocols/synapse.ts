@@ -2,6 +2,7 @@ import { chain } from 'eth-chains';
 import type { Network, ChainId, TokenSymbol, Token } from '../types';
 import { tokens } from '../tokens';
 import { networks } from '../networks';
+import type { Signer } from 'ethers';
 
 // import { Bridge, Tokens, Networks } from '@synapseprotocol/sdk';
 
@@ -34,6 +35,16 @@ export function getTokensForNetwork(chainId: ChainId): Record<TokenSymbol, Token
 	return tokens[chainId];
 }
 
+export async function estimateData(
+	fromNetwork: Network,
+	toNetwork: Network,
+	fromToken: Token,
+	toToken: Token,
+	amount: number
+) {
+	console.log('todo');
+}
+
 export async function bridgeAndSwapTokens(
 	fromChain: Network,
 	toChain: Network,
@@ -46,3 +57,11 @@ export async function bridgeAndSwapTokens(
 	console.log(Networks);
 	console.log('todo');
 }
+
+export async function init(signer: Signer) {
+	console.log('initializing synapse');
+}
+
+export async function needApproval() {}
+
+export async function approve(network: Network, token: Token, amount: number) {}

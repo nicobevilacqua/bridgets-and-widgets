@@ -127,12 +127,17 @@
 	let fromNetworkNativeTokenBalance: BigNumber | undefined;
 	let toNetworkNativeTokenBalance: BigNumber | undefined;
 	
-	$: networks = protocol === Protocols.Hop ? Hop.getNetworks() : Synapse.getNetworks();
-	$: fromTokens = fromNetwork ? Synapse.getTokensForNetwork(fromNetwork.chainId) : null;
-	$: toTokens = toNetwork ? Synapse.getTokensForNetwork(toNetwork.chainId) : null;
+	$: protocolProvider = protocol === Protocols.Hop ? Hop : Synapse;
+	$: networks = protocolProvider.getNetworks();
+	$: fromTokens = fromNetwork ? protocolProvider.getTokensForNetwork(fromNetwork.chainId) : null;
+	$: toTokens = toNetwork ? protocolProvider.getTokensForNetwork(toNetwork.chainId) : null;
 
 	let url = ``;
 	let hidden = false;
+
+	$: if (protocolProvider && $signer) {
+		protocolProvider.init($signer);
+	}
 
 	$: if ($address && fromNetwork && fromToken) {
 		console.log('running');
@@ -161,6 +166,16 @@
 		getNativeTokenBalance(fromNetwork).then((balance) => {
 			fromNetworkNativeTokenBalance = balance;
 		}).catch(console.error);
+	}
+
+	$: if ($signer && protocolProvider) {
+		protocolProvider.init($signer);
+	}
+
+	$: formFullFilled = fromNetwork && toNetwork && fromToken && toToken && fromAmount;
+
+	$: if (formFullFilled) {
+		protocolProvider.estimateData(fromNetwork, toNetwork, fromToken, toToken, fromAmount!);
 	}
 
 	enum Origin {
