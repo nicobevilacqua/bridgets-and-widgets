@@ -691,14 +691,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="px-2 py-2 -mt-2 md:px-0 md:py-4">
-			<button
-				class="group cursor-pointer outline-none focus:outline-none active:outline-none ring-none duration-100 transform-gpu w-full rounded-lg my-2 px-4 py-3 text-white text-opacity-100 transition-all hover:opacity-80 disabled:opacity-100 disabled:text-[#88818C] disabled:from-bgLight disabled:to-bgLight bg-gradient-to-r from-[#CF52FE] to-[#AC8FFF] undefined false"
-				disabled=""
-				type="button"><span>Choose your network</span></button
-			>
-		</div>
-		<div class="" />
 	</div>
 </div>
 
