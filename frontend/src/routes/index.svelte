@@ -278,9 +278,8 @@
 				</p>
 
 				<div class="my-20 flex flex-col custom-button-centered align-middle">
-					<a
-						class="uppercase text-white btn btn-primary btn-first-tx   rounded-full"
-						href="/widgets">Get the widgets</a
+					<a class="uppercase text-white btn btn-primary btn-first-tx   rounded-full" href="/widget"
+						>Get the widgets</a
 					>
 				</div>
 			</div>
