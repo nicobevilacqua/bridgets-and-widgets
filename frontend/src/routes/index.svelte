@@ -71,7 +71,7 @@
 
 		<WidgetSynapse />
 		<div
-			style="position:absolute; left:1rem; top:85%; z-index:9001;"
+			class="floating-widget"
 			on:click={() => {
 				option0 = !option0;
 			}}
@@ -80,7 +80,7 @@
 		</div>
 	{:else}
 		<div
-			style="position:absolute; left:1rem; top:90%; z-index:9001;"
+			class="floating-widget"
 			on:click={() => {
 				option0 = !option0;
 			}}
@@ -352,6 +352,17 @@
 		top: 1.5rem;
 		right: 2rem;
 		border-radius: 8px;
+	}
+
+	.floating-widget {
+		position: fixed;
+		left: 1rem;
+		top: 90%;
+		z-index: 9001;
+		cursor: pointer;
+		background: #cccccc38;
+		border-radius: 50px;
+		padding: 0.2rem;
 	}
 
 	/* .floating-button-container:after {
