@@ -52,6 +52,7 @@
 	};
 
 	import { RPC } from '../utils/rpc';
+	import Logo from './svg/logo.svelte';
 
 	function getProvider(network: Network) {
 		const rpcProviderUrl = RPC[network.chainId];
@@ -957,6 +958,8 @@
 													><span class="cursor-pointer">Analytics</span>
 												</div></a
 											>
+											<a class="pt-4 block" href="/"><Logo /></a>
+
 										</div>
 									</div>
 								</div>

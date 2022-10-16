@@ -18,7 +18,7 @@
 	import Logo from '$lib/svg/logo.svelte';
 	import { onMount } from 'svelte';
 
-	var option0 = false;
+	var option0 = true;
 
 	function runScript() {
 		console.log('Running script');
