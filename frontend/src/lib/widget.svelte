@@ -24,10 +24,28 @@
 	import { init, address, provider, signer, connect } from '../store/wallet';
 
 	onMount(() => {
-		init();
-		url = window.location.href;
-		if (url.indexOf('synapse') != -1 || url.indexOf('hop') != -1) hidden = true;
-	});
+    init();
+    url = window.location.href;
+    if (url.indexOf('synapse') != -1 || url.indexOf('hop') != -1) hidden = true;
+    addCss("#root .min-h-screen.bg-no-repeat {backgroundColor:" + colors.backgroundColor);
+    addCss("#root * {color:" + colors.textColor);
+});
+
+function addCss(css: string) {
+    var css = css,
+        head = document.head || document.getElementsByTagName('head')[0],
+        style = document.createElement('style');
+
+    head.appendChild(style);
+
+    style.type = 'text/css';
+    if (style.styleSheet) {
+        // This is required for IE8 and below.
+        style.styleSheet.cssText = css;
+    } else {
+        style.appendChild(document.createTextNode(css));
+    }
+}
 
 	type Colors = {
 		backgroundColor: string;
