@@ -183,7 +183,6 @@
 			protocolProvider.getEstimatedData(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
 			protocolProvider.getNeedApproval(fromNetwork, toNetwork, fromToken, toToken, fromAmount!),
 		]).then(([_estimatedData, _needApproval]) => {
-			console.log(_estimatedData.totalFee, toToken, toToken.decimals, utils.formatUnits(_estimatedData.totalFee, toToken.decimals));
 			estimatedData = _estimatedData;
 			toAmount = estimatedData.receivedAmount;
 			needApproval = _needApproval;
@@ -288,6 +287,8 @@
 	var slippage = '--';
 	$: messageButton = (!fromNetwork || !toNetwork) ? 'Enter networks' : (!fromToken || !toToken) ? 'Enter tokens' : !fromAmount ? 'Enter amount to bridge' : !fromTokenBalance || fromAmount < fromTokenBalance ? 'Insufficient founds' : 'Confirm';
 	var balanceOf = 0;
+
+	let showReceipientInput: boolean = false;
 
 	// mappings section
 	const mapNetworks = new Map();
@@ -849,7 +850,7 @@
 															transition:slide={{ delay: 50, duration: 300, easing: quintOut }}
 														>
 															<div class="text-red-500 mb-2">
-																Insufficient balance for gas on destination network
+																Insufficient balance for gas on {toNetwork.name}
 															</div>
 															<label class="text-[#88818C] cursor-pointer">
 																<input type="checkbox" bind:checked={addTokensForGas} />
@@ -868,9 +869,9 @@
 																	Amount to be received {utils.formatUnits(estimatedData.receivedAmount, toToken.decimals)} {toToken.symbol}
 																</span>
 															</div>
-															<div class="flex justify-between text-[#88818C]">
+															<div class="flex justify-between text-[#88818C] mt-2">
 																<span class="text-[#88818C]">
-																	Total fees {utils.formatUnits(estimatedData.totalFee, toToken.decimals)} {toToken.symbol}
+																	Total fees {utils.formatUnits(estimatedData.totalFee, protocol === Protocols.Hop ? toToken.decimals : 18)} {toToken.symbol}
 																</span>
 															</div>
 														</div>
@@ -908,52 +909,55 @@
 													</div>
 												</div> -->
 
-												<details class="summary-code-170">
-													<summary class="summary-code-171"
-														><div
+												<div class="summary-code-170">
+													<div class="summary-code-171">
+														<button
 															class="mb-4 MuiTypography-root summary-code-172 MuiTypography-subtitle1 MuiTypography-colorTextSecondary"
+															on:click={() => showReceipientInput = !showReceipientInput}
 														>
 															<span>More Options</span>
-														</div>
-													</summary>
-													<div transition:slide>
-														<div class="w-[30%]">
-															<div
-																class="flex items-center justify-center  h-[26px] -mt-4 p-2 absolute ml-5 md:ml-10 text-sm text-[#D8D1DC] rounded-md bg-bgLight"
-															>
-																Withdraw to...
-															</div>
-														</div>
-														<div class="h-16  pb-4 mt-8 space-x-2 text-left ">
-															<div
-																class="
-																	h-14 flex flex-grow items-center
-																	bg-transparent
-																	border border-bgLight hover:border-bgLightest focus-within:border-bgLightest
-																	pl-3 sm:pl-4
-																	py-0.5 rounded-xl
-																	font-0775
-                                "
-															>
-																<input
-																	class="
-																		focus:outline-none
-																		bg-transparent
-																		w-[300px]
-																		sm:min-w-[300px]
-																		max-w-[calc(100%-92px)]
-																		sm:w-full
-																		text-white text-opacity-80 text-xl
-																		placeholder:text-[#88818C]
-																		font-1
-																	"
-																	placeholder="Enter {receivingToken} address..."
-																	bind:value={recipientAddress}
-																/>
-															</div>
-														</div>
+														</button>
 													</div>
-												</details>
+													{#if showReceipientInput}
+														<div transition:slide={{ delay: 50, duration: 300, easing: quintOut }}>
+															<div class="w-[30%]">
+																<div
+																	class="flex items-center justify-center  h-[26px] -mt-4 p-2 absolute ml-5 md:ml-10 text-sm text-[#D8D1DC] rounded-md bg-bgLight"
+																>
+																	Withdraw to...
+																</div>
+															</div>
+															<div class="h-16  pb-4 mt-8 space-x-2 text-left ">
+																<div
+																	class="
+																		h-14 flex flex-grow items-center
+																		bg-transparent
+																		border border-bgLight hover:border-bgLightest focus-within:border-bgLightest
+																		pl-3 sm:pl-4
+																		py-0.5 rounded-xl
+																		font-0775
+																	"
+																>
+																	<input
+																		class="
+																			focus:outline-none
+																			bg-transparent
+																			w-[300px]
+																			sm:min-w-[300px]
+																			max-w-[calc(100%-92px)]
+																			sm:w-full
+																			text-white text-opacity-80 text-xl
+																			placeholder:text-[#88818C]
+																			font-1
+																		"
+																		placeholder="Enter {receivingToken} address..."
+																		bind:value={recipientAddress}
+																	/>
+																</div>
+															</div>
+														</div>
+														{/if}
+													</div>
 
 												<div class="px-2 py-2 -mt-2 md:px-0 md:py-4">
 													{#if $address}
@@ -974,7 +978,7 @@
 														>
 															{approving ? `Approving` : `Approve ${fromToken.name} transfer on ${fromNetwork.name}`}
 														</button>
-													(:else)
+													{:else}
 														<button
 															class="group cursor-pointer outline-none focus:outline-none active:outline-none ring-none duration-100 transform-gpu w-full rounded-lg my-2 px-4 py-3 text-white text-opacity-100 transition-all hover:opacity-80 disabled:opacity-100 disabled:text-[#88818C] disabled:from-bgLight disabled:to-bgLight bg-gradient-to-r from-[#CF52FE] to-[#AC8FFF] undefined false"
 															on:click={connect}
@@ -990,7 +994,7 @@
 										>
 											<div class="flex items-center text-secondaryTextColor">
 												<span class="mr-1 opacity-50">Need help? Read </span><a
-													href="https://github.com/nicobevilacqua/arbitrum-hop"
+													href="https://github.com/nicobevilacqua/bridgets-and-widgets"
 													target="_blank"
 													class=""
 													><span
