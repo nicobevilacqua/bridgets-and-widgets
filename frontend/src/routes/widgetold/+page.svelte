@@ -1,5 +1,5 @@
 <script>
-  import Widget from '$lib/widget.svelte';
+  import Widget from '$lib/widgetold.svelte';
 </script>
 
 <Widget 
