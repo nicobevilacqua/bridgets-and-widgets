@@ -39,13 +39,13 @@
 		hop: boolean;
 	};
 
-	export const title: string = 'Bridge';
-	export const colors: Colors = {
+	export let title: string;
+	export let colors: Colors = {
 		backgroundColor: '#fff',
 		textColor: '#333'
 	};
-	export const theme: string = 'dark';
-	export const protocols: EnabledProtocols = {
+	export let theme: string = 'dark';
+	export let protocols: EnabledProtocols = {
 		synapse: true,
 		hop: true
 	};
