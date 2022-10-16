@@ -1,3 +1,7 @@
+<script>
+	import Logo from '$lib/svg/logo.svelte';
+</script>
+
 <svelte:head>
 	<script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
 </svelte:head>
@@ -19,7 +23,8 @@
 						class="px-8 mx-4"
 						style="background-color:#fff !important; border-radius:12px"
 					>
-						<h2 class="mt-10 mb-12 text-4xl font-extrabold md:text-6xl pt-8">
+						<a class="pt-4 block" href="/"><Logo /></a>
+						<h2 class=" mb-12 text-4xl font-extrabold md:text-6xl pt-8">
 							Synapse-Arbitrum Bridge Stats
 						</h2>
 						<iframe
