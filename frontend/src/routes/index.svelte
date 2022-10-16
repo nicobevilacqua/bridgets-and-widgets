@@ -154,12 +154,12 @@
 					class="starting-buttons mt-4 flex flex-1 pt-6 justify-center space-x-2 sm:justify-start lg:mt-6 lg:justify-start"
 				>
 					{#if !$connected}
-						<button
+						<!-- <button
 							on:click={onConnect}
 							class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
 						>
 							Connect
-						</button>
+						</button> -->
 						<!-- <button
                             on:click={runScript}
                             class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
@@ -252,7 +252,7 @@
 							<a
 								class="btn-what-is-a-transaction inline-block cursor-pointer rounded-md bg-indigo-600 px-4 py-3 text-center text-sm
                        font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-indigo-700 btn-tertiary btn"
-								href="widgets">Try our Widgets in your DApp</a
+								href="widget">Try our Widgets in your DApp</a
 							>
 						</div>
 						<div class="mt-8 text-center inline-flex justify-center">

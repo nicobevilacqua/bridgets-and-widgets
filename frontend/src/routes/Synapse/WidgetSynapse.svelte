@@ -1,5 +1,6 @@
 <script>
-	import Synapse from './+page.svelte';
+	// import Synapse from './+page.svelte';
+	import Synapse from '$lib/widget.svelte';
 	import SynapseLogo from '$lib/svg/Synapse.svelte';
 
 	function toggleShowSynapse() {
