@@ -262,8 +262,8 @@
 								<li class="">1 - Go to swap/bridge page</li>
 								<li class="">2 - Add your tokens to buy and sell</li>
 								<li class="">3 - Write a receiver address (optional)</li>
-								<li class="">4 - Add a deadline (optional)</li>
-								<li class="">5 - Sign the transaction</li>
+								<!-- <li class="">4 - Add a deadline (optional)</li> -->
+								<li class="">4 - Sign the transaction</li>
 							</ol>
 						</div>
 						<p class="mt-4 text-center mx-auto w-full max-w-xs flex-grow sm:max-w-md">
@@ -273,7 +273,7 @@
 							<a
 								class="btn-what-is-a-transaction inline-block cursor-pointer rounded-md bg-indigo-600 px-4 py-3 text-center text-sm
                        font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-indigo-700 btn-tertiary btn"
-								href="widget">Try our Widgets in your DApp</a
+								href="widget">Try our Widget</a
 							>
 						</div>
 						<div class="mt-8 text-center inline-flex justify-center">
@@ -303,10 +303,10 @@
 					options you needed!
 				</p>
 				<code id="code_block" style="" />
-				<div class="my-20 flex flex-col custom-button-centered align-middle">
-					<a class="uppercase text-white btn btn-primary btn-first-tx   rounded-full" href="/widget"
+				<div class="my-5 flex flex-col custom-button-centered align-middle">
+					<!-- <a class="uppercase text-white btn btn-primary btn-first-tx   rounded-full" href="/widget"
 						>Try the widget</a
-					>
+					> -->
 				</div>
 			</div>
 		</div>
@@ -335,7 +335,7 @@
 				>
 					<a
 						class="btn  btn-tertiary btn-outline rounded-full w-full md:w-1/2 btn-fix"
-						href="https://ethereum.org/en/bridges/">More information</a
+						href="https://dune.com/deivitto/widgets-and-bridges">More information</a
 					>
 					<br />
 					<a class="btn btn-tertiary rounded-full w-full md:w-1/2 btn-fix" href="/stadistics">
