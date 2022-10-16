@@ -1,5 +1,23 @@
 <script lang="ts">
-	export let name;
+	type Colors = {
+		backgroundColor: string;
+		textColor: string;
+	};
+
+	type Protocols = {
+		synapse: boolean;
+		hop: boolean;
+	}
+
+	export const title: string = 'Bridge';
+	export const colors: Colors = {
+		backgroundColor: '#fff',
+		textColor: '#333',
+	};
+	export const protocols: Protocols = {
+		synapse: true,
+		hop: true,
+	};
 
 	import '../app.postcss'; // needed for rollup export
 	import { onMount } from 'svelte';
