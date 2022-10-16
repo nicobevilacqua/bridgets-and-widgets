@@ -207,7 +207,7 @@
                         > -->
 					{/if}
 					<a
-						href="/Hop"
+						href="/hop"
 						class="btn btn-tertiary button-first-section btn-ghost btn-active lg:btn-lg normal-case"
 					>
 						Trade with Hop
