@@ -43,48 +43,50 @@
 		/* Standard syntax*/
 		animation-duration: 1s;
 		animation-name: slidein_side;
+		transition: all 0.3s ease-in-out;
 	}
 	.dp-none {
-		display: none;
+		position: absolute;
+		right: -700px;
 	}
 
 	@-webkit-keyframes slidein_side {
 		from {
-			margin-left: 100%;
+			left: 100%;
 			width: 300%;
 		}
 
 		to {
-			margin-left: 0%;
+			left: 0%;
 			width: 100%;
 		}
 	}
 
 	@-moz-keyframes slidein_side {
 		from {
-			margin-left: 100%;
+			left: 100%;
 			width: 300%;
 		}
 
 		to {
-			margin-left: 0%;
+			left: 0%;
 			width: 100%;
 		}
 	}
 	@-o-keyframes slidein_side {
 		from {
-			margin-left: 100%;
+			left: 100%;
 			width: 300%;
 		}
 
 		to {
-			margin-left: 0%;
+			left: 0%;
 			width: 100%;
 		}
 	}
 	@keyframes slidein_side {
 		from {
-			margin-left: 100%;
+			left: 100%;
 			width: 300%;
 		}
 

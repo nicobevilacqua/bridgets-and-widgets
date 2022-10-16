@@ -1,13 +1,302 @@
-<script>
-	import Landing from './Landing.svelte';
+<script context="module">
+	export const prerender = true;
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Bridges&Widgets" />
-</svelte:head>
+<script>
+	import { connected, signerAddress, chainId } from 'svelte-ethers-store';
+	// import ByW from "./../../assets/ByW.png"
+	import ByWLink from '$lib/images/logo.png';
+	import SvgCheck from '$lib/svg/svgCheck.svelte';
+	import Wallet from '$lib/WalletAddress.svelte';
 
-<Landing />
+	// import { main } from "$lib/placeOrder"
+	import { onConnect, onDisconnect, connectWallet } from '$lib/web3';
+	import Synapse from '$lib/svg/Synapse.svelte';
+	import Hop from '$lib/svg/Hop.svelte';
+	import Logo from '$lib/svg/logo.svelte';
+	function runScript() {
+		console.log('Running script');
+		// main()
+	}
+	// $: start_string = signerAddress != null && connected ? signerAddress.slice(0, 4) : ""
+	// $: end_string = signerAddress != null && connected ? signerAddress.slice(-4) : ""
+	// $: address = "" + start_string + end_string
+	// $: backgroundImage = backgroundImages[randomIndex];
+
+	async function changeNetwork() {
+		const CHAIN_ID = 80001;
+		const HEXCHAIN_ID = '0x' + CHAIN_ID.toString(16);
+		try {
+			await window.ethereum.request({
+				method: 'wallet_addEthereumChain',
+				params: [
+					{
+						chainId: HEXCHAIN_ID,
+						chainName: 'Mumbai testnet',
+						nativeCurrency: {
+							name: 'Matic',
+							symbol: 'MATIC',
+							decimals: 18
+						},
+
+						rpcUrls: [
+							'https://matic-mumbai--jsonrpc.datahub.figment.io/apikey/f1f9f2031af0fbbd9d45fb6c87caf3c2',
+							'https://rpc.ankr.com/moonbeam/',
+							'https://eth-mainnet.gateway.pokt.network/v1/lb/5db541c720ddaa659cf004d2',
+							'https://eth-goerli-rpc.gateway.pokt.network/',
+							'https://goerli.ethereum.coinbasecloud.net'
+						],
+						blockExplorerUrls: ['https://mumbai.polygonscan.com/']
+					}
+				]
+			});
+			setTimeout(() => {
+				document.location.reload();
+			}, 10);
+		} catch (e) {
+			console.log(e);
+			alert('Please manually change your network to Mumbai testnet');
+		}
+	}
+	console.log($connected);
+</script>
+
+<div class="index">
+	<div
+		class="from-primary to-secondary text-primary-content -mt-[4rem] grid place-items-center items-end bg-gradient-to-br pt-20 hero-image-main"
+	>
+		<div
+			class="hero-content col-start-1 row-start-1 w-full max-w-7xl flex-col justify-between gap-10 pb-20 lg:flex-row lg:items-end lg:gap-0 xl:gap-20"
+		>
+			<div class="lg:px-10 lg:pb-12">
+				<h1 class="font-title mb-2 py-4 font-extrabold lg:py-10">
+					{#if $connected}
+						<div class="floating-button-container btn btn-tertiar ">
+							<!-- content -->
+							{#if $chainId == 80001}
+								<!-- {start_string}{end_string} -->
+								<div on:click={onDisconnect}>
+									<Wallet />
+								</div>
+
+								<!-- <button class="floating-button-wallet" on:click={onDisconnect}>
+                                    asdasdasdas
+                                    <span class="floating-button-address" />
+                                </button> -->
+							{:else}
+								<button class="floating-button-wallet" on:click={changeNetwork}>
+									WRONG NETWORK!
+									<span class="floating-button-address" />
+								</button>
+							{/if}
+						</div>
+					{/if}
+					<!-- <img style="max-width:54px" src={ByWLink} alt="Bridges & Widges Logo" /> -->
+					<Logo />
+					<!-- <ByW /> -->
+					<!-- <SvgLogo /> -->
+					<div class="mb-2 text-5xl lg:text-7xl title_milketh">Bridges&Widgets</div>
+					<div class="text-2xl lg:text-3xl pt-4 subtitle_milketh">
+						Use a bridge in minutes!<br />
+						<!-- somethnig more here??-->
+					</div>
+				</h1>
+				<div
+					class="flex w-full flex-col items-start space-y-10 lg:flex-row lg:space-x-4 lg:space-y-0"
+				>
+					<div class="my-2 flex max-w-sm flex-col gap-2 text-left padding-small-screen">
+						<div class="flex gap-2">
+							<SvgCheck />
+							Easy to use and made for everyone
+						</div>
+						<div class="flex gap-2">
+							<SvgCheck />
+							Analysis tools included
+						</div>
+						<div class="flex gap-2">
+							<SvgCheck />
+							Multichain compatible
+						</div>
+						<div class="flex gap-2">
+							<SvgCheck />
+							Compatible with a wide range of tokens
+						</div>
+					</div>
+				</div>
+				<div
+					class="starting-buttons mt-4 flex flex-1 pt-6 justify-center space-x-2 sm:justify-start lg:mt-6 lg:justify-start"
+				>
+					{#if !$connected}
+						<button
+							on:click={onConnect}
+							class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
+						>
+							Connect
+						</button>
+						<!-- <button
+                            on:click={runScript}
+                            class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
+                        >
+                            Test Script
+                        </button> -->
+						<!-- <button
+                            on:click={connectWallet}
+                            class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case"
+                        >
+                            Connect Wallet 2
+                        </button> -->
+						<!-- <a
+                            href="/swap"
+                            class="btn button-first-section btn-ghost btn-active lg:btn-lg normal-case "
+                        >
+                            Swap
+                        </a> -->
+						<!-- <a href="#how" class="btn lg:btn-lg normal-case">How does it work?</a> -->
+					{:else}
+						<!-- <a href="/faq" class="btn button-first-section lg:btn-lg normal-case">FAQ</a
+                        > -->
+					{/if}
+					<a
+						href="/Hop"
+						class="btn btn-tertiary button-first-section btn-ghost btn-active lg:btn-lg normal-case"
+					>
+						Trade with Hop
+					</a>
+					<a
+						href="/Synapse"
+						class="btn btn-tertiary button-first-section btn-active lg:btn-lg normal-case"
+					>
+						Trade with Synapse
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- <Background /> https://cdn.pixabay.com/photo/2016/11/18/12/55/light-1834289_960_720.jpg-->
+		<!-- <svg
+            class="fill-secondary col-start-1 row-start-1 h-auto w-full"
+            width="1600"
+            height="595"
+            viewBox="0 0 1600 595"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M0 338L53.3 349.2C106.7 360.3 213.3 382.7 320 393.8C426.7 405 533.3 405 640 359.3C746.7 313.7 853.3 222.3 960 189.2C1066.7 156 1173.3 181 1280 159.2C1386.7 137.3 1493.3 68.7 1546.7 34.3L1600 0V595H1546.7C1493.3 595 1386.7 595 1280 595C1173.3 595 1066.7 595 960 595C853.3 595 746.7 595 640 595C533.3 595 426.7 595 320 595C213.3 595 106.7 595 53.3 595H0V338Z"
+            />
+        </svg> -->
+	</div>
+
+	<!-- {$signerAddress} -->
+
+	<div
+		class="hero bg-base-100 text-base-content mx-auto min-h-screen max-w-md md:max-w-full background-regular"
+	>
+		<div class="hero-content px-4 text-center md:px-0">
+			<div id="how">
+				<h2 class="mt-32 mb-2 text-4xl font-extrabold md:text-6xl">How does it work?</h2>
+				<h3 class="mb-5 text-3xl font-bold">As simple as a regular transaction</h3>
+				<p class="mx-auto  mb-5 w-full max-w-lg" style="font-size: 20px">
+					Bridges&Widgets aims to help users to perform bridge operations in a more simple way and
+					aims to helps developers on implement bridge operations in few minutes
+				</p>
+
+				<p />
+				<div
+					class="mt-10 mb-10 flex flex-col lg:flex-row second-box-content"
+					style="font-size: 20px"
+				>
+					<div class="flex w-full flex-col text-left">
+						<div class="text-center mx-auto w-full max-w-xs flex-grow sm:max-w-md">
+							Users can both <b>swap</b> or
+							<b>bridge</b> tokens For using Bridges&Widgets, follow these steps:
+							<ol class="mt-4  text-center">
+								<li class="">1 - Go to swap/bridge page</li>
+								<li class="">2 - Add your tokens to buy and sell</li>
+								<li class="">3 - Write a receiver address (optional)</li>
+								<li class="">4 - Add a deadline (optional)</li>
+								<li class="">5 - Sign the transaction</li>
+							</ol>
+						</div>
+						<p class="mt-4 text-center mx-auto w-full max-w-xs flex-grow sm:max-w-md">
+							And that's all! You have used <b> Bridges&Widgets</b>
+						</p>
+						<div class="mt-4 flex h-16 items-start justify-center">
+							<a
+								class="btn-what-is-a-transaction inline-block cursor-pointer rounded-md bg-indigo-600 px-4 py-3 text-center text-sm
+                       font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-indigo-700 btn-tertiary btn"
+								href="widgets">Try our Widgets in your DApp</a
+							>
+						</div>
+						<a href="widgets" class="mt-8 text-center inline-flex justify-center">
+							<div class="mt-8 text-center inline-flex justify-center gap-4">
+								<Synapse />
+								<Hop />
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div
+		class="hero from-primary to-accent text-primary-content min-h-screen bg-gradient-to-br background-gradient"
+		id="private"
+	>
+		<div class="hero-content mx-auto max-w-md text-center md:max-w-full">
+			<div id="transaction">
+				<h2 class="mt-20 mb-12 text-4xl font-extrabold md:text-6xl">Why using Bridges&Widgets?</h2>
+				<!-- <h3 class="mb-5 text-3xl font-bold">Lorem ipsum</h3> -->
+				<p class="mx-auto mb-5 w-full regular-text lh-regular">
+					Thanks to our widgets implementation, Bridges&Widgets allows your DApp to bridge in less
+					than 5 minutes.
+				</p>
+
+				<div class="my-20 flex flex-col custom-button-centered align-middle">
+					<a
+						class="uppercase text-white btn btn-primary btn-first-tx   rounded-full"
+						href="/widgets">Get the widgets</a
+					>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div
+		class="hero from-primary to-accent text-primary-content min-h-screen bg-gradient-to-br background-regular"
+		id="private"
+	>
+		<div class="hero-content mx-auto max-w-md text-center md:max-w-full">
+			<div>
+				<h2 class="mt-20 mb-8  text-4xl font-extrabold md:text-6xl">Bridge your tokens</h2>
+				<h3 class="mb-5 text-3xl font-bold regular-text-title">
+					Use one of our widgets to bridge your tokens!
+				</h3>
+				<p class="mx-auto mb-5 w-full max-w-l regular-text-smaller">
+					Actually, we implemented widgets for Hop and Synapse, that includes multiples chains and
+					tokens.
+				</p>
+				<p class="mx-auto mb-5 w-full max-w-l regular-text-smaller">
+					We provide you the tools, you enjoy the travel
+				</p>
+
+				<div
+					class="my-20 flex flex-col md:flex-row custom-button-centered space-between md:gap-4 centered-buttons-small"
+				>
+					<a
+						class="btn  btn-tertiary btn-outline rounded-full w-full md:w-1/2 btn-fix"
+						href="https://ethereum.org/en/bridges/">More information</a
+					>
+					<br />
+					<a class="btn btn-tertiary rounded-full w-full md:w-1/2 btn-fix" href="/stadistics">
+						Go stadistics!</a
+					>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 <style>
 	* {
