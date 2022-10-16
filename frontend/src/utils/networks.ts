@@ -11,7 +11,10 @@ export const networks = {
 	},
 	[chain.optimism.mainnet.chainId]: {
 		...chain.optimism.mainnet,
-		icon: '/optimism.png'
+		icon: '/optimism.png',
+		parent: {
+			type: 'L2'
+		}
 	},
 	[chain.arbitrum.mainnet.chainId]: {
 		...chain.arbitrum.mainnet,
