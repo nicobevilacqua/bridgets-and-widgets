@@ -1,5 +1,5 @@
 import { chain } from 'eth-chains';
-import type { Network, ChainId, TokenSymbol, Token } from '../types';
+import type { Network, ChainId, TokenSymbol, Token, EstimatedData } from '../types';
 import { tokens } from '../tokens';
 import { networks } from '../networks';
 import type { Signer } from 'ethers';
@@ -45,9 +45,9 @@ export async function getEstimatedData(
 	fromToken: Token,
 	toToken: Token,
 	amount: number
-) {
+): Promise<EstimatedData> {
 	console.log('todo');
-	return { totalFee: 0.1 };
+	return { totalFee: 0.1, receivedAmount: amount };
 }
 
 export async function getNeedApproval(

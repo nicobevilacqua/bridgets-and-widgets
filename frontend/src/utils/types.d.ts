@@ -1,4 +1,5 @@
 import { Chain } from 'eth-chains';
+import type { BigNumber } from 'ethers';
 
 export type ChainId = number;
 
@@ -13,4 +14,9 @@ export type Token = {
 	readonly symbol: TokenSymbol;
 	readonly native?: boolean;
 	readonly icon?: string;
+};
+
+export type EstimatedData = {
+	totalFee: BigNumber;
+	receivedAmount: BigNumber;
 };

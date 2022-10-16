@@ -1,8 +1,9 @@
 import { chain } from 'eth-chains';
-import type { Network, ChainId, TokenSymbol, Token } from '../types';
+import type { EstimatedData, Network, ChainId, TokenSymbol, Token } from '../types';
 import { tokens } from '../tokens';
 import { networks } from '../networks';
 import type { Signer } from 'ethers';
+import { utils } from 'ethers';
 import { Chain, Hop, HopBridge, type TToken, ChainSlug } from '@hop-protocol/sdk';
 
 const CHAIN_SLUGS = {
@@ -47,8 +48,8 @@ export async function getEstimatedData(
 	fromToken: Token,
 	toToken: Token,
 	amount: number
-) {
-	return { totalFee: 0.1 };
+): Promise<EstimatedData> {
+	return { totalFee: utils.parseEther('0.1'), receivedAmount: utils.parseEther(amount.toString()) };
 	// not working locally
 	const bridge = getBridge(fromNetwork, toNetwork, fromToken, toToken);
 	const parsedAmount = bridge.parseUnits(amount);
